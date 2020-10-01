@@ -23,12 +23,32 @@ class TableController extends AbstractController
      */
     public function print(Request $req)
     {   
-        // dump($req);
-        $num = $req->get("n");
+        $method = $req->getMethod();
 
-        return $this->render('table/print.html.twig', [
-            'n' => $num,
-        ]);
+        dump($req);
+
+        if ($method == 'GET') {
+            $num = $req->get("n");
+            $limit = $req->get("limit");
+
+            return $this->render('table/print.html.twig', [
+                'n' => $num,
+                'limit' => $limit,
+                'formMethod' => $method,
+            ]);
+        }
+        else {
+            $table_choice = $req->get('table_choice'); // On récupère le tableau associatif
+            $num = $table_choice['table_number'];
+            $limit = $table_choice['table_limit'];
+
+            return $this->render('table/print.html.twig', [
+                'n' => $num,
+                'formMethod' => $method,
+                'limit' => $limit,
+            ]);
+        }
+        
     }
     /**
      * @Route("/select", name="select")
@@ -41,8 +61,37 @@ class TableController extends AbstractController
         if ($form->isSubmitted()) { // si le formulaire est envoyé
             $data = $form->getData();
             $ret['n'] = $data['table_number'];
+            $ret['limit'] = $data['table_limit'];
             $response = $this->redirectToRoute('table_print', $ret);
 
+        } 
+        else {  // si le formulaire n'est pas envoyé
+            $response = $this->render('table/select.html.twig', [
+                'formulaire' => $form->createView(),
+            ]);
+        }
+        return $response;
+    }
+
+
+    /**
+     * @Route("/select2", name="select2")
+     */
+    public function select2(Request $req) 
+    {
+        $form = $this->createForm(TableChoiceType::class, null, 
+            [
+                'method' => 'POST',
+                'action' => '/print'
+            ]
+        );
+        $form->handleRequest($req); // on demande d'analyser la requête
+
+        if ($form->isSubmitted()) { // si le formulaire est envoyé
+            $data = $form->getData();
+            $ret['n'] = $data['table_number'];
+            $ret['limit'] = $data['table_limit'];
+            $response = $this->redirectToRoute('table_print', $ret);
         } 
         else {  // si le formulaire n'est pas envoyé
             $response = $this->render('table/select.html.twig', [

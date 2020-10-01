@@ -13,9 +13,16 @@
     <hr/>
 
     <table>
-        {% for i in range(0, 10) %}
-            <tr><td>{{ i }}</td><td> x </td><td>{{ n }}</td><td>= {{i*n}}</td></tr>
-        {% endfor %}
+        {% if limit == 0 %}
+            {% for i in range(0, 10) %}
+                <tr><td>{{ i }}</td><td> x </td><td>{{ n }}</td><td>= {{i*n}}</td></tr>
+            {% endfor %}
+        {% else %}
+            {% for i in range(0, limit) %}
+                <tr><td>{{ i }}</td><td> x </td><td>{{ n }}</td><td>= {{i*n}}</td></tr>
+            {% endfor %}
+        {% endif %} 
     </table>
+    
 </div>
 {% endblock %}
