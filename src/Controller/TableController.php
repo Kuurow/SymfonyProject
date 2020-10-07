@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Table;
+use App\Form\TableChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Form\TableChoiceType;
 
 class TableController extends AbstractController
 {
@@ -29,11 +30,14 @@ class TableController extends AbstractController
 
         if ($method == 'GET') {
             $num = $req->get("n");
-            $limit = $req->get("limit");
+
+            $table = new Table($num);
+
+            dump($table);
 
             return $this->render('table/print.html.twig', [
+                'values' => $table->calcTable(),
                 'n' => $num,
-                'limit' => $limit,
                 'formMethod' => $method,
             ]);
         }
@@ -43,9 +47,7 @@ class TableController extends AbstractController
             $limit = $table_choice['table_limit'];
 
             return $this->render('table/print.html.twig', [
-                'n' => $num,
-                'formMethod' => $method,
-                'limit' => $limit,
+                'formMethod' => $method,               
             ]);
         }
         
